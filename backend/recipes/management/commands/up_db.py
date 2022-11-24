@@ -28,4 +28,4 @@ class Command(BaseCommand):
                         measurement_unit=measurement_unit
                     )
         except FileNotFoundError:
-            raise CommandError('Добавить ingredients в data')
+            raise CommandError('Добавить файл в data')
