@@ -3,18 +3,19 @@ from django.db.models import BooleanField, Exists, OuterRef, Value
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
+
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
-from api.serializers import (FollowSerializer, IngredientSerializer, RecipePostSerializer,
-                         ShortRecipeSerializer, TagSerializer, RecipeGetSerializer)
+from api.serializers import (FollowSerializer, IngredientSerializer,
+                             RecipeGetSerializer, RecipePostSerializer,
+                             ShortRecipeSerializer, TagSerializer)
+from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
 from users.models import Follow
-
 
 User = get_user_model()
 

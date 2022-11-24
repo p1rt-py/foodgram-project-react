@@ -1,5 +1,6 @@
-from django.contrib.admin import ModelAdmin, register
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register
+
 from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 
 
