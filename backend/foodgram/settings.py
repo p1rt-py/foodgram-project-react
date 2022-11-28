@@ -8,10 +8,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS',  default='*', )]
+# ALLOWED_HOSTS = [os.getenv('foodgram-practicum.ddnsking.com', '158.160.5.8', 'ALLOWED_HOSTS', default='*')]
 
 
 INSTALLED_APPS = [
