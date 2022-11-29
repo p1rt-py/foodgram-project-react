@@ -1,5 +1,5 @@
 # praktikum_new_diplom
-
+![workflow](https://github.com/p1rt-py/foodgram-project-react/actions/workflows/main.yml/badge.svg?branch=master&event=push)
 **Сервер будет доступен по адресу:**
 ```bash
  http://158.160.5.8/     
