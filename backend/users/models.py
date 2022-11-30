@@ -60,9 +60,6 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
         ordering = ['-id', ]
 
-    def __str__(self):
-        return self.username
-
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -83,8 +80,8 @@ class Follow(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_follow')
+            fields=['user', 'author'],
+            name='unique_follow')
         ]
 
     def __str__(self):

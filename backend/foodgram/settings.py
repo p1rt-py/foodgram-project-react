@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # DEBUG = True
 DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS',  default='*', )]
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*', )]
 # ALLOWED_HOSTS = [os.getenv('foodgram-practicum.ddnsking.com', '158.160.5.8', 'ALLOWED_HOSTS', default='*')]
 
 
