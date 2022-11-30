@@ -4,11 +4,6 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     env_file:
       - ./.env
     container_name: db
