@@ -37,7 +37,7 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
-    container_name: ngnix
+    container_name: nginx
 
 volumes:
   postgres_data:
