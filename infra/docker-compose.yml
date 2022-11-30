@@ -8,8 +8,13 @@ services:
       - ./.env
     container_name: db
   backend:
+#    build:
+#      context: ../backend
+#      dockerfile: Dockerfile
     image: p1rt/foodgram_backend:latest
     restart: always
+#    ports:
+#      - "8000:8000"
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
@@ -19,6 +24,9 @@ services:
       - ./.env
     container_name: backend
   frontend:
+#    build:
+#      context: ../frontend
+#      dockerfile: Dockerfile
     image: p1rt/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
