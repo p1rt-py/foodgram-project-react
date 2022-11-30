@@ -6,9 +6,6 @@ from recipes.models import Recipe
 
 
 class RecipeFilter(FilterSet):
-    """Фильтры для сортировки рецептов по:
-       тегам, нахождению в избранном и корзине.
-    """
     is_in_shopping_cart = filters.BooleanFilter(
         method='get_is_in_shopping_cart',
         label='shopping_cart',)

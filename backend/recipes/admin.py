@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin, register
+from django.contrib.admin import ModelAdmin
 
-from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
+from .models import Cart, Favorite, Ingredient, Recipe, Tag
 
 
 class TagAdmin(ModelAdmin):

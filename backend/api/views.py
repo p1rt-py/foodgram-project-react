@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import BooleanField, Exists, OuterRef, Value
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -18,22 +19,6 @@ from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
 from users.models import Follow
 
 User = get_user_model()
-
-
-class TagsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Tag.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
-    serializer_class = TagSerializer
-    pagination_class = None
-
-
-class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
-    serializer_class = IngredientSerializer
-    filter_backends = (IngredientSearchFilter,)
-    search_fields = ('^name',)
-    pagination_class = None
 
 
 class FollowViewSet(UserViewSet):
@@ -91,6 +76,7 @@ class FollowViewSet(UserViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    filter_backends = (DjangoFilterBackend,)
     filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = LimitPageNumberPagination
@@ -189,3 +175,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response = HttpResponse(shopping_list, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
+
+
+class TagsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    serializer_class = TagSerializer
+    pagination_class = None
+
+
+class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ingredient.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    serializer_class = IngredientSerializer
+    filter_backends = (IngredientSearchFilter,)
+    search_fields = ('^name',)
+    pagination_class = None

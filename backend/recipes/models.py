@@ -45,9 +45,6 @@ class Ingredient(models.Model):
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
         ordering = ['name']
-        # constraints = [
-        #     models.UniqueConstraint(fields=['name', 'measurement_unit'],
-        #                             name='unique_for_ingredient')]
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -88,7 +85,9 @@ class Recipe(models.Model):
         validators=[validators.MinValueValidator(1, )]
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации', auto_now_add=True)
+        verbose_name='Дата публикации',
+        auto_now_add=True
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -140,10 +139,6 @@ class IngredientAmount(models.Model):
     class Meta:
         verbose_name = 'Количество ингридиента'
         verbose_name_plural = 'Количество ингридиентов'
-        # constraints = [
-        #     models.UniqueConstraint(fields=['recipe', 'ingredients'],
-        #                             name='unique_ingredients_recipe')
-        # ]
 
     def __str__(self) -> str:
         return f'{self.ingredients.name} - {self.amount}'
@@ -166,10 +161,6 @@ class Cart(models.Model):
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = 'В корзине'
-        # constraints = [
-        #     models.UniqueConstraint(fields=['user', 'recipe'],
-        #                             name='unique_cart_user')
-        # ]
 
     def __str__(self):
         return f'{self.user} -> {self.recipe}'
@@ -192,10 +183,6 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
-        # constraints = [
-        #     models.UniqueConstraint(fields=['user', 'recipe'],
-        #                             name='unique_user_recipe')
-        # ]
 
     def __str__(self):
         return f'{self.user} -> {self.recipe}'
