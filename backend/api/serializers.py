@@ -98,7 +98,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
-    ingredients = serializers.SerializerMethodField(many=True)
+    ingredients = serializers.SerializerMethodField()
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
     image = Base64ImageField()
