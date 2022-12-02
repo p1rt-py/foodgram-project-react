@@ -65,8 +65,16 @@ class FollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ('id', 'email', 'username', 'first_name', 'last_name',
-                  'is_subscribed', 'recipes', 'recipes_count')
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count'
+        )
 
     def get_is_subscribed(self, obj):
         return Follow.objects.filter(
@@ -121,7 +129,10 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
-            'id', 'name', 'measurement_unit', amount=F('recipe__amount')
+            'id',
+            'name',
+            'measurement_unit',
+            amount=F('recipe__amount'),
         )
 
 
@@ -143,7 +154,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
-            'id', 'name', 'measurement_unit', amount=F('recipe__amount')
+            'id',
+            'name',
+            'measurement_unit',
+            amount=F('recipe__amount'),
         )
 
     def validate(self, data):

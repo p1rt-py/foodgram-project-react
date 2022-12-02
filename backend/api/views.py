@@ -20,22 +20,6 @@ from users.models import Follow
 User = get_user_model()
 
 
-class TagsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Tag.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
-    serializer_class = TagSerializer
-    pagination_class = None
-
-
-class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
-    serializer_class = IngredientSerializer
-    filter_backends = (IngredientSearchFilter,)
-    search_fields = ('^name',)
-    pagination_class = None
-
-
 class FollowViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
 
@@ -87,6 +71,22 @@ class FollowViewSet(UserViewSet):
             context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
+
+
+class TagsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    serializer_class = TagSerializer
+    pagination_class = None
+
+
+class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ingredient.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    serializer_class = IngredientSerializer
+    filter_backends = (IngredientSearchFilter,)
+    search_fields = ('^name',)
+    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
