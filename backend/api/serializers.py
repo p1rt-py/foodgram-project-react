@@ -22,10 +22,10 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
-            'id',
-            'username',
-            'password',
             'email',
+            'id',
+            'password',
+            'username',
             'first_name',
             'last_name'
         )
@@ -37,9 +37,9 @@ class CustomUserSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
+            'email',
             'id',
             'username',
-            'email',
             'first_name',
             'last_name',
             'is_subscribed'
@@ -98,16 +98,26 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
-    ingredients = serializers.SerializerMethodField()
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
-    image = Base64ImageField()
+    ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.BooleanField(default=False)
     is_in_shopping_cart = serializers.BooleanField(default=False)
 
     class Meta:
         model = Recipe
-        fields = '_all_'
+        fields = (
+            'id',
+            'tags',
+            'author',
+            'ingredients',
+            'is_favorited',
+            'is_in_shopping_cart',
+            'name',
+            'image',
+            'text',
+            'cooking_time',
+        )
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
@@ -116,16 +126,16 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 
 class RecipePostSerializer(serializers.ModelSerializer):
-    ingredients = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
+    ingredients = serializers.SerializerMethodField()
     image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = (
-            'name',
-            'ingredients',
             'tags',
+            'ingredients',
+            'name',
             'image',
             'text',
             'cooking_time',
@@ -133,10 +143,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
-            'id',
-            'name',
-            'measurement_unit',
-            amount=F('recipe__amount'),
+            'id', 'name', 'measurement_unit', amount=F('recipe__amount')
         )
 
     def validate(self, data):
