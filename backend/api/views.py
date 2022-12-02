@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import BooleanField, Exists, OuterRef, Value
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -94,14 +95,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = LimitPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return RecipeGetSerializer
         return RecipePostSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
 
     def get_queryset(self):
         user = self.request.user
@@ -123,6 +122,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         return queryset
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
     @action(detail=True, methods=['post'],
             permission_classes=[IsAuthenticated])
     def favorite(self, request, pk=None):
@@ -141,7 +143,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def del_from_shopping_cart(self, request, pk=None):
         return self.delete_obj(Cart, request.user, pk)
 
-    def add_obj(self, model, user, pk):
+    @staticmethod
+    def add_obj(model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
             return Response({
                 'errors': 'Ошибка добавления рецепта в список'
@@ -151,7 +154,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = ShortRecipeSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete_obj(self, model, user, pk):
+    @staticmethod
+    def delete_obj(model, user, pk):
         obj = model.objects.filter(user=user, recipe__id=pk)
         if obj.exists():
             obj.delete()

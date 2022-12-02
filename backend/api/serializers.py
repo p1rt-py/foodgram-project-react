@@ -22,10 +22,10 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
-            'email',
             'id',
-            'password',
             'username',
+            'password',
+            'email',
             'first_name',
             'last_name'
         )
@@ -37,9 +37,9 @@ class CustomUserSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
-            'email',
             'id',
             'username',
+            'email',
             'first_name',
             'last_name',
             'is_subscribed'
@@ -98,26 +98,16 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
+    ingredients = serializers.SerializerMethodField(many=True)
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
-    ingredients = serializers.SerializerMethodField()
+    image = Base64ImageField()
     is_favorited = serializers.BooleanField(default=False)
     is_in_shopping_cart = serializers.BooleanField(default=False)
 
     class Meta:
         model = Recipe
-        fields = (
-            'id',
-            'tags',
-            'author',
-            'ingredients',
-            'is_favorited',
-            'is_in_shopping_cart',
-            'name',
-            'image',
-            'text',
-            'cooking_time',
-        )
+        fields = '_all_'
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
@@ -126,16 +116,16 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 
 class RecipePostSerializer(serializers.ModelSerializer):
+    ingredients = serializers.SerializerMethodField(many=True)
     tags = TagSerializer(many=True, read_only=True)
-    ingredients = serializers.SerializerMethodField()
     image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = (
-            'tags',
-            'ingredients',
             'name',
+            'ingredients',
+            'tags',
             'image',
             'text',
             'cooking_time',
