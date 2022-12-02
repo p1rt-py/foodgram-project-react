@@ -133,7 +133,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
-            'id', 'name', 'measurement_unit', amount=F('recipe__amount')
+            'id',
+            'name',
+            'measurement_unit',
+            amount=F('recipe__amount'),
         )
 
     def validate(self, data):
