@@ -8,10 +8,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from api.filters import RecipeFilter
-from api.pagination import LimitPageNumberPagination
-from api.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
-from api.serializers import (FollowSerializer, IngredientSerializer,
+from .utils import download_cart
+from .filters import RecipeFilter
+from .pagination import LimitPageNumberPagination
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
+from .serializers import (FollowSerializer, IngredientSerializer,
                              RecipeGetSerializer, RecipePostSerializer,
                              ShortRecipeSerializer, TagSerializer)
 from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
@@ -161,3 +162,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response({
             'errors': 'Ошибка удаления рецепта из списка'
         }, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        return download_cart(request)

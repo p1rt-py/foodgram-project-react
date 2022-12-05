@@ -1,14 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
 
-@action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
-def download_shopping_cart(self, request):
+def download_cart(request):
     user = get_object_or_404(User, username=request.user.username)
     shopping_cart = user.cart.all()
     shopping_dict = {}
