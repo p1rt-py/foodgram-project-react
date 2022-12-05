@@ -12,7 +12,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*', )]
-# ALLOWED_HOSTS = [os.getenv('foodgram-practicum.ddnsking.com', '158.160.5.8', 'ALLOWED_HOSTS', default='*')]
 
 
 INSTALLED_APPS = [
@@ -29,6 +28,7 @@ INSTALLED_APPS = [
     'api',
     'recipes',
     'djoser',
+    'colorfield',
     'corsheaders',
     'django_filters',
 ]
@@ -120,23 +120,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'users.User'
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-#     'https://foodgram-practicum.ddnsking.com',
-#     'https://158.160.5.8',
-#     'https://158.160.5.8:3000',
-# ]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
-
-# CORS_ALLOW_METHODS = [
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-# ]
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

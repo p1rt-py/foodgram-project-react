@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -161,22 +162,21 @@ class RecipePostSerializer(serializers.ModelSerializer):
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
         ingredients_set = set()
+        if not ingredients:
+            raise serializers.ValidationError(
+                'Необходимо выбрать ингредиенты!'
+            )
         for ingredient in ingredients:
-            if type(ingredient.get('amount')) == str:
-                if not ingredient.get('amount').isdigit():
-                    raise serializers.ValidationError(
-                        ('Количество ингредиента дольжно быть числом')
-                    )
-            if int(ingredient.get('amount')) <= 0:
+            if int('amount') <= 0:
                 raise serializers.ValidationError(
-                    ('Добавить минимум 1 ингридиент')
+                    'Добавить минимум 1 ингридиент'
                 )
-            id = ingredient.get('id')
-            if id in ingredients_set:
+            ingredient_id = ingredient.get('id')
+            if ingredient_id in ingredients_set:
                 raise serializers.ValidationError(
                     'Такой ингридиент уже есть.'
                 )
-            ingredients_set.add(id)
+            ingredients_set.add(ingredient_id)
         data['ingredients'] = ingredients
         return data
 
@@ -186,13 +186,20 @@ class RecipePostSerializer(serializers.ModelSerializer):
         for tag in tags:
             instance.tags.add(tag)
 
-        for ingredient in ingredients:
-            IngredientAmount.objects.create(
-                recipe=instance,
-                ingredients_id=ingredient.get('id'),
-                amount=ingredient.get('amount'))
+        IngredientAmount.objects.bulk_create(
+            [
+                IngredientAmount(
+                    recipe=instance,
+                    ingredients_id=ingredient.get('id'),
+                    amount=ingredient.get('amount')
+                )
+                for ingredient in ingredients
+            ]
+        )
+
         return instance
 
+    @transaction.atomic
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = self.initial_data.get('tags')
@@ -211,7 +218,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(max_length=None, use_url=False,)
+    image = Base64ImageField(max_length=None, use_url=False, )
 
     class Meta:
         model = Recipe
