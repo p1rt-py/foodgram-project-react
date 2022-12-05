@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import BooleanField, Exists, OuterRef, Value
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -85,7 +86,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = IngredientSerializer
-    filter_backends = (IngredientSearchFilter,)  # [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend]
     search_fields = ('^name',)
     pagination_class = None
 
