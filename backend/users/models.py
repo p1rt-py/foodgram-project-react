@@ -6,9 +6,6 @@ class User(AbstractUser):
     """Модель User.
        Позволяет при создании запрашивать емейл и юзернейм.
     """
-    # USER = 'user'
-    # ADMIN = 'admin'
-
     ROLE_CHOICES = (
         ('user', 'Пользователь'),
         ('admin', 'Администратор'),
