@@ -97,7 +97,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = LimitPageNumberPagination
-    serializer_class = RecipePostSerializer            # delete
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -107,25 +106,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeGetSerializer
         return RecipePostSerializer
 
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     queryset = Recipe.objects.all()
-    #
-    #     if user.is_authenticated:
-    #         queryset = queryset.annotate(
-    #             is_favorited=Exists(Favorite.objects.filter(
-    #                 user=user, recipe__pk=OuterRef('pk'))
-    #             ),
-    #             is_in_shopping_cart=Exists(Cart.objects.filter(
-    #                 user=user, recipe__pk=OuterRef('pk'))
-    #             )
-    #         )
-    #     else:
-    #         queryset = queryset.annotate(
-    #             is_favorited=Value(False, output_field=BooleanField()),
-    #             is_in_shopping_cart=Value(False, output_field=BooleanField())
-    #         )
-    #     return queryset
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Recipe.objects.all()
+
+        if user.is_authenticated:
+            queryset = queryset.annotate(
+                is_favorited=Exists(Favorite.objects.filter(
+                    user=user, recipe__pk=OuterRef('pk'))
+                ),
+                is_in_shopping_cart=Exists(Cart.objects.filter(
+                    user=user, recipe__pk=OuterRef('pk'))
+                )
+            )
+        else:
+            queryset = queryset.annotate(
+                is_favorited=Value(False, output_field=BooleanField()),
+                is_in_shopping_cart=Value(False, output_field=BooleanField())
+            )
+        return queryset
 
     @action(detail=True, methods=['post'],
             permission_classes=[IsAuthenticated])

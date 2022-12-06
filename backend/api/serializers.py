@@ -104,17 +104,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class IngredientOfAmount(serializers.ModelSerializer):   # удалить
-#     id = serializers.ReadOnlyField(source='ingredients.id')
-#     measurement_unit = serializers.ReadOnlyField(
-#         source='ingredients.measurement_unit')
-#     name = serializers.ReadOnlyField(source='ingredients.name')
-#
-#     class Meta:
-#         model = IngredientAmount
-#         fields = ['id', 'name', 'measurement_unit', 'amount']
-
-
 class RecipeGetSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
@@ -161,24 +150,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time',
         )
-
-    # def get_ingredients(self, obj):                                           # удалить
-    #     queryset = IngredientAmount.objects.filter(recipe=obj)
-    #     serializer = IngredientOfAmount(queryset, many=True)
-    #     return serializer.data
-
-    # def get_is_favorited(self, obj):                                           # удалить
-    #     user = self.context.get('request').user
-    #     if user.is_anonymous:
-    #         return False
-    #     return Recipe.objects.filter(
-    #         favourite__author=user, id=obj.id).exists()
-
-    # def get_is_in_shopping_cart(self, obj):                                     # удалить
-    #     user = self.context.get('request').user
-    #     if user.is_anonymous:
-    #         return None
-    #     return Recipe.objects.filter(Cart__author=user, id=obj.id).exists()
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
