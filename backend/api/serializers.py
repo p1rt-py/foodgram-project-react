@@ -104,6 +104,17 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class IngredientOfAmount(serializers.ModelSerializer):   # удалить
+    id = serializers.ReadOnlyField(source='ingredients.id')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredients.measurement_unit')
+    name = serializers.ReadOnlyField(source='ingredients.name')
+
+    class Meta:
+        model = IngredientAmount
+        fields = ['id', 'name', 'measurement_unit', 'amount']
+
+
 class RecipeGetSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
@@ -151,13 +162,31 @@ class RecipePostSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
-    def get_ingredients(self, obj):
-        return obj.ingredients.values(
-            'id',
-            'name',
-            'measurement_unit',
-            amount=F('recipe__amount'),
-        )
+    def get_ingredients(self, obj):                                           # удалить
+        queryset = IngredientAmount.objects.filter(recipe=obj)
+        serializer = IngredientOfAmount(queryset, many=True)
+        return serializer.data
+
+    def get_is_favorited(self, obj):                                           # удалить
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Recipe.objects.filter(
+            favourite__author=user, id=obj.id).exists()
+
+    def get_is_in_shopping_cart(self, obj):                                     # удалить
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return None
+        return Recipe.objects.filter(Cart__author=user, id=obj.id).exists()
+
+    # def get_ingredients(self, obj):
+    #     return obj.ingredients.values(
+    #         'id',
+    #         'name',
+    #         'measurement_unit',
+    #         amount=F('recipe__amount'),
+    #     )
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
@@ -207,6 +236,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return self.add_tags_ingredients(
             recipe, ingredients=ingredients, tags=tags)
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         instance.ingredients.clear()
         instance.tags.clear()

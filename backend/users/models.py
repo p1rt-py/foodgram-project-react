@@ -6,12 +6,12 @@ class User(AbstractUser):
     """Модель User.
        Позволяет при создании запрашивать емейл и юзернейм.
     """
-    USER = 'user'
-    ADMIN = 'admin'
+    # USER = 'user'
+    # ADMIN = 'admin'
 
     ROLE_CHOICES = (
-        ('USER', 'user'),
-        ('ADMIN', 'admin'),
+        ('user', 'Пользователь'),
+        ('admin', 'Администратор'),
     )
 
     email = models.EmailField(
@@ -47,7 +47,7 @@ class User(AbstractUser):
         'Кто есть кто',
         max_length=15,
         choices=ROLE_CHOICES,
-        default='USER'
+        default='user'
     )
 
     @property

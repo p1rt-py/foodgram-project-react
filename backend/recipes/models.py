@@ -25,10 +25,6 @@ class Tag(models.Model):
         unique=True
     )
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        return super(Tag, self).save(*args, **kwargs)
-
     class Meta:
         verbose_name = 'Тэг'
         verbose_name_plural = 'Тэги'
@@ -39,6 +35,10 @@ class Tag(models.Model):
             f'name: {self.name},'
             f'color in HEX: {self.color}'
         )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        return super(Tag, self).save(*args, **kwargs)
 
 
 class Ingredient(models.Model):
