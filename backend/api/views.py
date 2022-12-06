@@ -97,6 +97,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = LimitPageNumberPagination
+    serializer_class = RecipePostSerializer            # delete
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
