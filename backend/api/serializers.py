@@ -6,7 +6,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from recipes.models import Ingredient, IngredientAmount, Recipe, Tag, Cart
+from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from users.models import Follow
 
 User = get_user_model()
@@ -158,19 +158,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
             'measurement_unit',
             amount=F('recipe__amount'),
         )
-
-    def get_is_favorited(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Recipe.objects.filter(
-            favourite__author=user, id=obj.id).exists()
-
-    def get_is_in_shopping_cart(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return None
-        return Recipe.objects.filter(cart__author=user, id=obj.id).exists()
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
