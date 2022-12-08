@@ -1,7 +1,4 @@
 from django_filters import AllValuesMultipleFilter
-from django_filters.rest_framework import FilterSet, filters
-from django_filters.widgets import BooleanWidget
-from django_filters import AllValuesMultipleFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import BooleanWidget
 from recipes.models import Recipe
@@ -21,5 +18,3 @@ class TagFavoritShopingFilter(filters.FilterSet):
 
 class IngredientSearchFilter(SearchFilter):
     search_param = 'name'
-
-#test1
