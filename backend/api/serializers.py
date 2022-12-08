@@ -45,7 +45,7 @@ class CustomUserSerializer(UserSerializer):
             'last_name',
             'is_subscribed'
         )
-        read_only_fields = 'is_subscribed',
+        # read_only_fields = 'is_subscribed',
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
@@ -185,7 +185,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
         tags = validated_data['tags']
         for tag in tags:
             instance.tags.add(tag)
-
         IngredientAmount.objects.bulk_create(
             [
                 IngredientAmount(
@@ -196,7 +195,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 for ingredient in ingredients
             ]
         )
-
         return instance
 
     @transaction.atomic
@@ -219,7 +217,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(max_length=None, use_url=False, )
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
