@@ -5,7 +5,7 @@ from recipes.models import Recipe
 from rest_framework.filters import SearchFilter
 
 
-class RecipeFilter(FilterSet):
+class TagFavoritShopingFilter(FilterSet):
     author = AllValuesMultipleFilter(field_name="author__id")
     tags = AllValuesMultipleFilter(field_name="tags__slug")
     is_in_shopping_cart = filters.BooleanFilter(widget=BooleanWidget())
