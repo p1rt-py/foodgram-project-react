@@ -85,7 +85,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
+    # permission_classes = (IsAdminOrReadOnly,)
     serializer_class = IngredientSerializer
     filter_backends = [DjangoFilterBackend]
     search_fields = ('^name',)
@@ -97,6 +97,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = LimitPageNumberPagination
+    serializer_class = RecipePostSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -138,11 +139,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk=None):
-        return self.add_obj(Cart, request.user, pk)
+        return self.add_obj(Cart, request.user, Cart, pk)
 
     @shopping_cart.mapping.delete
     def del_from_shopping_cart(self, request, pk=None):
-        return self.delete_obj(Cart, request.user, pk)
+        return self.delete_obj(Cart, request.user, Cart, pk)
 
     def add_obj(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
