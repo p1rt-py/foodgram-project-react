@@ -7,6 +7,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
+# from rest_framework.filters import SearchFilter
 
 from .utils import download_cart
 from .filters import RecipeFilter
@@ -88,7 +89,8 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = IngredientSerializer
     filter_backends = [DjangoFilterBackend]
-    # search_fields = ('^name',)
+    search_fields = ('^name',)
+    # search_param = 'name'(SearchFilter)
     pagination_class = None
 
 

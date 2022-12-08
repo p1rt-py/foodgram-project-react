@@ -45,13 +45,22 @@ class CustomUserSerializer(UserSerializer):
             'last_name',
             'is_subscribed'
         )
-        # read_only_fields = 'is_subscribed',
+        read_only_fields = 'is_subscribed',
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
         return Follow.objects.filter(user=user, author=obj.id).exists()
+
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+        read_only_fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -185,16 +194,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
         tags = validated_data['tags']
         for tag in tags:
             instance.tags.add(tag)
-        IngredientAmount.objects.bulk_create(
-            [
-                IngredientAmount(
-                    recipe=instance,
-                    ingredients_id=ingredient.get('id'),
-                    amount=ingredient.get('amount')
-                )
-                for ingredient in ingredients
-            ]
-        )
+
+        for ingredient in ingredients:                     # old
+            IngredientAmount.objects.create(
+                recipe=instance,
+                ingredients_id=ingredient.get('id'),
+                amount=ingredient.get('amount'))
         return instance
 
     @transaction.atomic
@@ -214,12 +219,3 @@ class RecipePostSerializer(serializers.ModelSerializer):
         instance = self.add_tags_ingredients(
             instance, ingredients=ingredients, tags=tags)
         return super().update(instance, validated_data)
-
-
-class ShortRecipeSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
-        read_only_fields = ('id', 'name', 'image', 'cooking_time')
