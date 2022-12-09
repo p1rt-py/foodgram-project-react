@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from .filters import IngredientSearchFilter, TagFavoritShopingFilter
+from .filters import RecipeFilter   # IngredientSearchFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
@@ -30,7 +30,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (IngredientSearchFilter,)
+    # filter_backends = (IngredientSearchFilter,)
     search_fields = ('^name',)
 
 
@@ -90,7 +90,7 @@ class FollowViewSet(UserViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = LimitPageNumberPagination
-    filter_class = TagFavoritShopingFilter
+    filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
