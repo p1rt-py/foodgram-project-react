@@ -166,18 +166,18 @@ class RecipePostSerializer(serializers.ModelSerializer):
             if type(ingredient.get('amount')) == str:
                 if not ingredient.get('amount').isdigit():
                     raise serializers.ValidationError(
-                        ('Количество ингредиента дольжно быть числом')
+                        'Необходимо выбрать ингредиенты!'
                     )
             if int(ingredient.get('amount')) <= 0:
                 raise serializers.ValidationError(
-                    ('Минимальное количество ингридиентов 1')
+                    'Добавить минимум 1 ингридиент'
                 )
-            id = ingredient.get('id')
-            if id in ingredients_set:
+            ingredient_id = ingredient.get('id')
+            if ingredient_id in ingredients_set:
                 raise serializers.ValidationError(
-                    'Ингредиент не должен повторяться.'
+                    'Такой ингридиент уже есть.'
                 )
-            ingredients_set.add(id)
+            ingredients_set.add(ingredient_id)
         data['ingredients'] = ingredients
         return data
 
