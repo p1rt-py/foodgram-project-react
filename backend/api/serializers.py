@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -161,21 +162,22 @@ class RecipePostSerializer(serializers.ModelSerializer):
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
         ingredients_set = set()
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Необходимо выбрать ингредиенты!'
-            )
         for ingredient in ingredients:
-            if int('amount') <= 0:
+            if type(ingredient.get('amount')) == str:
+                if not ingredient.get('amount').isdigit():
+                    raise serializers.ValidationError(
+                        ('Количество ингредиента дольжно быть числом')
+                    )
+            if int(ingredient.get('amount')) <= 0:
                 raise serializers.ValidationError(
-                    'Добавить минимум 1 ингридиент'
+                    ('Минимальное количество ингридиентов 1')
                 )
-            ingredient_id = ingredient.get('id')
-            if ingredient_id in ingredients_set:
+            id = ingredient.get('id')
+            if id in ingredients_set:
                 raise serializers.ValidationError(
-                    'Такой ингридиент уже есть.'
+                    'Ингредиент не должен повторяться.'
                 )
-            ingredients_set.add(ingredient_id)
+            ingredients_set.add(id)
         data['ingredients'] = ingredients
         return data
 
@@ -192,6 +194,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 amount=ingredient.get('amount'))
         return instance
 
+    @transaction.atomic
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = self.initial_data.get('tags')
@@ -199,6 +202,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return self.add_tags_ingredients(
             recipe, ingredients=ingredients, tags=tags)
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         instance.ingredients.clear()
         instance.tags.clear()
