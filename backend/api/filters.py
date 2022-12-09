@@ -2,7 +2,7 @@ from django_filters import AllValuesMultipleFilter
 from django_filters.rest_framework import filters
 from django_filters.widgets import BooleanWidget
 from recipes.models import Recipe
-from rest_framework.filters import SearchFilter
+# from rest_framework.filters import SearchFilter
 
 
 class RecipeFilter(filters.FilterSet):
