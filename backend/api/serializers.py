@@ -169,12 +169,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 )
             if int(ingredient.get('amount')) <= 0:
                 raise serializers.ValidationError(
-                    'Добавить минимум 1 ингридиент.'
+                    'Добавить минимум 1 ингредиент.'
                 )
             ingredient_id = ingredient.get('id')
             if ingredient_id in ingredients_set:
                 raise serializers.ValidationError(
-                    'Такой ингридиент уже есть.'
+                    'Такой ингредиент уже есть.'
                 )
             ingredients_set.add(ingredient_id)
         data['ingredients'] = ingredients
@@ -186,14 +186,17 @@ class RecipePostSerializer(serializers.ModelSerializer):
         for tag in tags:
             instance.tags.add(tag)
 
-        for ingredient in ingredients:
-            IngredientAmount.objects.create(
-                recipe=instance,
-                ingredients_id=ingredient.get('id'),
-                amount=ingredient.get('amount'))
+        IngredientAmount.objects.bulk_create(
+            [IngredientAmount(
+                    recipe=instance,
+                    ingredients_id=ingredient.get('id'),
+                    amount=ingredient.get('amount')
+                )
+                for ingredient in ingredients]
+        )
         return instance
 
-    @transaction.atomic
+@transaction.atomic
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = self.initial_data.get('tags')
