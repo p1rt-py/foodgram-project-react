@@ -19,6 +19,63 @@ from users.models import Follow
 User = get_user_model()
 
 
+class FollowViewSet(UserViewSet):
+    pagination_class = LimitPageNumberPagination
+
+    @action(
+        methods=['post', 'delete'],
+        detail=True,
+        permission_classes=[IsAuthenticated]
+    )
+    def subscribe(self, request, id=None):
+        user = request.user
+        author = get_object_or_404(User, id=id)
+        if request.method == 'POST':
+            if user == author:
+                return Response({
+                    'errors': 'Нельзя подписываться на себя'
+                },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if Follow.objects.filter(user=user, author=author).exists():
+                return Response({
+                    'errors': 'Уже подписаны на пользователя'
+                },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            follow = Follow.objects.create(user=user, author=author)
+            serializer = FollowSerializer(
+                follow, context={'request': request}
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if request.method == 'DELETE':
+            if user == author:
+                return Response({
+                    'errors': 'Нельзя отписываться от самого себя'
+                },
+                    status=status.HTTP_400_BAD_REQUEST)
+            follow = Follow.objects.filter(user=user, author=author)
+            if not follow.exists():
+                return Response({
+                    'errors': 'Вы не подписаны'
+                },
+                    status=status.HTTP_400_BAD_REQUEST)
+            follow.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, permission_classes=[IsAuthenticated])
+    def subscriptions(self, request):
+        user = request.user
+        queryset = Follow.objects.filter(user=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(
+            pages,
+            many=True,
+            context={'request': request}
+        )
+        return self.get_paginated_response(serializer.data)
+
+
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     queryset = Ingredient.objects.all()
@@ -33,57 +90,6 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
 
 
-class FollowViewSet(UserViewSet):
-    pagination_class = LimitPageNumberPagination
-
-    @action(
-        methods=['post'], detail=True, permission_classes=[IsAuthenticated])
-    def subscribe(self, request, id=None):
-        user = request.user
-        author = get_object_or_404(User, id=id)
-
-        if user == author:
-            return Response({
-                'errors': 'Ошибка подписки, нельзя подписываться на себя'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        if Follow.objects.filter(user=user, author=author).exists():
-            return Response({
-                'errors': 'Ошибка подписки, вы уже подписаны на пользователя'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        follow = Follow.objects.create(user=user, author=author)
-        serializer = FollowSerializer(
-            follow, context={'request': request}
-        )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @subscribe.mapping.delete
-    def del_subscribe(self, request, id=None):
-        user = request.user
-        author = get_object_or_404(User, id=id)
-        if user == author:
-            return Response({
-                'errors': 'Ошибка отписки, нельзя отписываться от самого себя'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        follow = Follow.objects.filter(user=user, author=author)
-        if not follow.exists():
-            return Response({
-                'errors': 'Ошибка отписки, вы уже отписались'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        follow.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(detail=False, permission_classes=[IsAuthenticated])
-    def subscriptions(self, request):
-        user = request.user
-        queryset = Follow.objects.filter(user=user)
-        pages = self.paginate_queryset(queryset)
-        serializer = FollowSerializer(
-            pages,
-            many=True,
-            context={'request': request}
-        )
-        return self.get_paginated_response(serializer.data)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
