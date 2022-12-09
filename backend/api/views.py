@@ -9,10 +9,10 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from api.filters import IngredientSearchFilter, TagFavoritShopingFilter
-from api.pagination import LimitPageNumberPagination
-from api.permissions import AdminOrReadOnly, AdminUserOrReadOnly
-from api.serializers import (FollowSerializer, IngredientSerializer,
+from .filters import IngredientSearchFilter, TagFavoritShopingFilter
+from .pagination import LimitPageNumberPagination
+from .permissions import AdminOrReadOnly, AdminUserOrReadOnly
+from .serializers import (FollowSerializer, IngredientSerializer,
                              RecipeReadSerializer, RecipeWriteSerializer,
                              ShortRecipeSerializer, TagSerializer)
 from users.models import Follow
