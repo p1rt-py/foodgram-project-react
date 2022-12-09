@@ -7,7 +7,7 @@ from recipes.models import Recipe
 class RecipeFilter(FilterSet):
     is_in_shopping_cart = filters.BooleanFilter(
         method='get_is_in_shopping_cart',
-        label='shopping_cart', )
+        label='shopping_cart',)
     is_favorited = filters.BooleanFilter(
         method='get_favorite',
         label='favorite',
@@ -33,4 +33,3 @@ class RecipeFilter(FilterSet):
     class Meta:
         model = Recipe
         fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
-# test

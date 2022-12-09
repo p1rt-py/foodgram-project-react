@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 services:
   db:
     image: postgres:13.0-alpine
@@ -6,6 +6,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
+    container_name: db
   backend:
     image: p1rt/foodgram_backend:latest
     restart: always
@@ -16,12 +17,14 @@ services:
        - db
     env_file:
       - ./.env
+    container_name: backend
   frontend:
     image: p1rt/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
       - backend
+    container_name: fronted
   nginx:
     image: nginx:1.21.3-alpine
     ports:
@@ -34,6 +37,7 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
+    container_name: nginx
 
 volumes:
   postgres_data:

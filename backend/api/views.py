@@ -13,8 +13,8 @@ from .filters import RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
-                          RecipeGetSerializer, RecipePostSerializer,
-                          ShortRecipeSerializer, TagSerializer)
+                             RecipeGetSerializer, RecipePostSerializer,
+                             ShortRecipeSerializer, TagSerializer)
 from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
 from users.models import Follow
 

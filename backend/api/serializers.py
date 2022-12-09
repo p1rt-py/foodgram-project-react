@@ -172,7 +172,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
                     'Добавить минимум 1 ингридиент'
                 )
             ingredient_id = ingredient.get('id')
-
             if ingredient_id in ingredients_set:
                 raise serializers.ValidationError(
                     'Такой ингридиент уже есть.'
@@ -197,6 +196,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 for ingredient in ingredients
             ]
         )
+
         return instance
 
     @transaction.atomic
