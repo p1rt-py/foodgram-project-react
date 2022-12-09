@@ -2,7 +2,7 @@ from rest_framework.permissions import (SAFE_METHODS, BasePermission,
                                         IsAuthenticatedOrReadOnly)
 
 
-class AdminOrReadOnly(BasePermission):
+class IsAdminOrReadOnly(BasePermission):
     def has_permission(self, request, obj):
         return (
                 request.method in SAFE_METHODS
