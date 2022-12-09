@@ -7,14 +7,15 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
-from .utils import download_cart
+from users.models import Follow
+
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
-                             RecipeGetSerializer, RecipePostSerializer,
-                             ShortRecipeSerializer, TagSerializer)
-from users.models import Follow
+                          RecipeGetSerializer, RecipePostSerializer,
+                          ShortRecipeSerializer, TagSerializer)
+from .utils import download_cart
 
 User = get_user_model()
 
