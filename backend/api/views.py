@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 from .filters import IngredientSearchFilter, TagFavoritShopingFilter
 from .pagination import LimitPageNumberPagination
-from .permissions import AdminOrReadOnly, AdminUserOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                              RecipeReadSerializer, RecipeWriteSerializer,
                              ShortRecipeSerializer, TagSerializer)
@@ -21,13 +21,13 @@ User = get_user_model()
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (IngredientSearchFilter,)
@@ -91,7 +91,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_class = TagFavoritShopingFilter
-    permission_classes = [AdminUserOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
