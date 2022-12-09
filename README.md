@@ -16,7 +16,7 @@
 
 ## Сервер доступен по адресу:
 ```bash
- http://158.160.5.8/     
+ http://158.160.23.29/
 ```
 ```bash
  http://foodgram-practicum.ddnsking.com/
