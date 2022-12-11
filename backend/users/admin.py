@@ -5,8 +5,8 @@ from .models import Follow, User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'first_name', 'last_name', 'role')
-    search_fields = ('email', 'username', 'first_name', 'last_name', 'role')
+    list_display = ('email', 'username', 'first_name', 'last_name')
+    search_fields = ('email', 'username', 'first_name', 'last_name')
     empty_value_display = '-empty-'
 
 
