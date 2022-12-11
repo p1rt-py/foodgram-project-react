@@ -116,30 +116,30 @@ class Recipe(models.Model):
         return self.name
 
 
-class TagRecipe(models.Model):
-    tag = models.ForeignKey(
-        Tag,
-        on_delete=models.CASCADE,
-        verbose_name='Теги'
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        verbose_name='Рецепт'
-    )
-
-    class Meta:
-        verbose_name = 'Теги рецепта'
-        verbose_name_plural = 'Теги рецепта'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['tag', 'recipe'],
-                name='unique_tag_in_recipe'
-            )
-        ]
-
-    def __str__(self):
-        return f'{self.tag} {self.recipe}'
+# class TagRecipe(models.Model):
+#     tag = models.ForeignKey(
+#         Tag,
+#         on_delete=models.CASCADE,
+#         verbose_name='Теги'
+#     )
+#     recipe = models.ForeignKey(
+#         Recipe,
+#         on_delete=models.CASCADE,
+#         verbose_name='Рецепт'
+#     )
+#
+#     class Meta:
+#         verbose_name = 'Теги рецепта'
+#         verbose_name_plural = 'Теги рецепта'
+#         constraints = [
+#             models.UniqueConstraint(
+#                 fields=['tag', 'recipe'],
+#                 name='unique_tag_in_recipe'
+#             )
+#         ]
+#
+#     def __str__(self):
+#         return f'{self.tag} {self.recipe}'
 
 
 class IngredientAmount(models.Model):
