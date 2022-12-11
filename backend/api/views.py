@@ -14,7 +14,7 @@ from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                              RecipeGetSerializer, RecipePostSerializer,
                              ShortRecipeSerializer, TagSerializer)
-from users.models import Follow
+from users.models import Subscription
 
 User = get_user_model()
 
@@ -37,13 +37,13 @@ class FollowViewSet(UserViewSet):
                 },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            if Follow.objects.filter(user=user, author=author).exists():
+            if Subscription.objects.filter(user=user, author=author).exists():
                 return Response({
                     'errors': 'Уже подписаны на пользователя'
                 },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            follow = Follow.objects.create(user=user, author=author)
+            follow = Subscription.objects.create(user=user, author=author)
             serializer = FollowSerializer(
                 follow, context={'request': request}
             )
@@ -54,7 +54,7 @@ class FollowViewSet(UserViewSet):
                     'errors': 'Нельзя отписываться от самого себя'
                 },
                     status=status.HTTP_400_BAD_REQUEST)
-            follow = Follow.objects.filter(user=user, author=author)
+            follow = Subscription.objects.filter(user=user, author=author)
             if not follow.exists():
                 return Response({
                     'errors': 'Вы не подписаны'
@@ -66,7 +66,7 @@ class FollowViewSet(UserViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        queryset = Follow.objects.filter(user=user)
+        queryset = Subscription.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
         serializer = FollowSerializer(
             pages,
