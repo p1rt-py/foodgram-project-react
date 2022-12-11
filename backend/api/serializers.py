@@ -6,7 +6,7 @@ from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from users.models import Subscription
+from users.models import Follow
 
 User = get_user_model()
 
@@ -50,7 +50,7 @@ class CustomUserSerializer(UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=user, author=obj.id).exists()
+        return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class FollowSerializer(serializers.ModelSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Subscription
+        model = Follow
         fields = (
             'id',
             'email',
@@ -77,7 +77,7 @@ class FollowSerializer(serializers.ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        return Subscription.objects.filter(user=obj.user, author=obj.author).exists()
+        return Follow.objects.filter(user=obj.user, author=obj.author).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')

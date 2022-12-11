@@ -60,7 +60,7 @@ class User(AbstractUser):
         return self.username
 
 
-class Subscription(models.Model):
+class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
