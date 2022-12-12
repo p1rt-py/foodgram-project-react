@@ -22,6 +22,7 @@ User = get_user_model()
 
 class FollowViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
+    queryset = User.objects.all()
 
     @action(
         methods=['post', 'delete'],
