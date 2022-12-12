@@ -1,56 +1,49 @@
-from re import fullmatch
-
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
-from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import F
-from djoser.serializers import UserSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from rest_framework import serializers
-# from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator
 from users.models import Follow
 
 User = get_user_model()
 
 
-class CustomUserSerializer(UserSerializer):
-    """Класс регистрации пользователей"""
+class CustomUserCreateSerializer(UserCreateSerializer):
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())])
+    username = serializers.CharField(
+        validators=[UniqueValidator(queryset=User.objects.all())])
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'password')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create(
-            password=make_password(validated_data['password']),
-            email=validated_data['email'],
-            username=validated_data['username'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
+        fields = (
+            'email',
+            'id',
+            'password',
+            'username',
+            'first_name',
+            'last_name'
         )
-        user.save()
-        return user
-
-    def validate_username(self, value):
-        if value.lower() == 'me':
-            raise ValidationError('Нельзя создать пользователя с именем me')
-        if not fullmatch(r'[a-zA-Z0-9.@+-]{1,150}', value):
-            raise ValidationError('Имя пользователя может содержать только '
-                                  'латинские буквы, цифры и символы: @.+-')
-        return value
 
 
-class UserActionGetSerializer(UserSerializer):
-    """Класс получения данных пользователей"""
+class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed')
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed'
+        )
 
     def get_is_subscribed(self, value):
         user = self.context['request'].user
@@ -58,46 +51,6 @@ class UserActionGetSerializer(UserSerializer):
             subscription = Follow.objects.filter(author=value, user=user)
             return subscription.exists()
         return False
-# class CustomUserCreateSerializer(UserCreateSerializer):
-#     email = serializers.EmailField(
-#         validators=[UniqueValidator(queryset=User.objects.all())])
-#     username = serializers.CharField(
-#         validators=[UniqueValidator(queryset=User.objects.all())])
-#     first_name = serializers.CharField()
-#     last_name = serializers.CharField()
-#
-#     class Meta:
-#         model = User
-#         fields = (
-#             'email',
-#             'id',
-#             'password',
-#             'username',
-#             'first_name',
-#             'last_name'
-#         )
-#
-#
-# class CustomUserSerializer(UserSerializer):
-#     is_subscribed = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = User
-#         fields = (
-#             'email',
-#             'id',
-#             'username',
-#             'first_name',
-#             'last_name',
-#             'is_subscribed'
-#         )
-#         read_only_fields = 'is_subscribed',
-#
-#     def get_is_subscribed(self, obj):
-#         user = self.context.get('request').user
-#         if user.is_anonymous:
-#             return False
-#         return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
 class FollowSerializer(serializers.ModelSerializer):

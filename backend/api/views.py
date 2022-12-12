@@ -7,19 +7,22 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .utils import download_cart
+from users.models import Follow
+
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                           RecipeGetSerializer, RecipePostSerializer,
-                          ShortRecipeSerializer, TagSerializer, CustomUserSerializer, UserActionGetSerializer)
-from users.models import Follow
+                          ShortRecipeSerializer, TagSerializer,
+                          CustomUserSerializer, UserActionGetSerializer)
+
+from .utils import download_cart
 
 User = get_user_model()
 
 
-class FollowViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):                                         # !!!!
     """Класс регистрации и работы с пользователями и подписками на авторов"""
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
@@ -39,9 +42,11 @@ class FollowViewSet(UserViewSet):
         result_pages = paginator.paginate_queryset(queryset=authors,
                                                    request=request)
         context = {'request': self.request}
-        serializer = FollowSerializer(result_pages,
-                                      context=context,
-                                      many=True)
+        serializer = FollowSerializer(
+            result_pages,
+            context=context,
+            many=True
+        )
         return paginator.get_paginated_response(serializer.data)
 
     @action(methods=['post', 'delete'], detail=False,
@@ -69,7 +74,6 @@ class FollowViewSet(UserViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         response = {'errors': response_errors[request.method]}
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
 
 # class FollowViewSet(UserViewSet):
 #     pagination_class = LimitPageNumberPagination
