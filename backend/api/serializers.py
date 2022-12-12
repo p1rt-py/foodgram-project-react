@@ -21,19 +21,19 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
     class Meta:
         model = User
+
         fields = (
             'email',
             'id',
+            'password',
             'username',
             'first_name',
-            'last_name',
-            'password'
+            'last_name'
         )
 
 
 class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
-
     class Meta:
         model = User
         fields = (
@@ -44,27 +44,27 @@ class CustomUserSerializer(UserSerializer):
             'last_name',
             'is_subscribed'
         )
+        read_only_fields = 'is_subscribed',
 
-    def get_is_subscribed(self, value):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            subscription = Follow.objects.filter(author=value, user=user)
-            return subscription.exists()
-        return False
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    # id = serializers.ReadOnlyField(source='author.id')
-    # email = serializers.ReadOnlyField(source='author.email')
-    # username = serializers.ReadOnlyField(source='author.username')
-    # first_name = serializers.ReadOnlyField(source='author.first_name')
-    # last_name = serializers.ReadOnlyField(source='author.last_name')
+    id = serializers.ReadOnlyField(source='author.id')
+    email = serializers.ReadOnlyField(source='author.email')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = Follow
         fields = (
             'id',
             'email',
