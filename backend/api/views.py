@@ -15,7 +15,7 @@ from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                           RecipeGetSerializer, RecipePostSerializer,
                           ShortRecipeSerializer, TagSerializer,
-                          CustomUserSerializer, UserActionGetSerializer)
+                          CustomUserSerializer, CustomUserSerializer)
 
 from .utils import download_cart
 
@@ -31,7 +31,7 @@ class CustomUserViewSet(UserViewSet):                                         # 
     @action(detail=False, url_path='me', permission_classes=[IsAuthenticated])
     def me(self, request):
         context = {'request': self.request}
-        serializer = UserActionGetSerializer(request.user, context=context)
+        serializer = CustomUserSerializer(request.user, context=context)
         return Response(serializer.data)
 
     @action(detail=False, url_path='subscriptions',

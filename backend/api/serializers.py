@@ -24,10 +24,10 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         fields = (
             'email',
             'id',
-            'password',
             'username',
             'first_name',
-            'last_name'
+            'last_name',
+            'password'
         )
 
 
@@ -64,7 +64,7 @@ class FollowSerializer(serializers.ModelSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Follow
+        model = User
         fields = (
             'id',
             'email',
