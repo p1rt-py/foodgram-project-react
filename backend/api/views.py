@@ -14,7 +14,7 @@ from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                           RecipeGetSerializer, RecipePostSerializer,
-                          ShortRecipeSerializer, TagSerializer)
+                          ShortRecipeSerializer, TagSerializer, CustomUserCreateSerializer)
 from .utils import download_cart
 
 User = get_user_model()
@@ -23,6 +23,7 @@ User = get_user_model()
 class FollowViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
     queryset = User.objects.all()
+    serializer_class = CustomUserCreateSerializer
 
     @action(
         methods=['post', 'delete'],
