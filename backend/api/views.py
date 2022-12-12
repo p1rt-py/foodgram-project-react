@@ -19,7 +19,7 @@ from users.models import Follow
 User = get_user_model()
 
 
-class CustomUserViewSet(UserViewSet):
+class FollowViewSet(UserViewSet):
     """Класс регистрации и работы с пользователями и подписками на авторов"""
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
